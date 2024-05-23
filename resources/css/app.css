@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+    height: 100vh;
+}
+
+.conversation-item .avatar::before {
+    width: 20%;
+    height: 20%;
+    outline-width: 1px;
+    top: 2%;
+    right: 2%;
+}
+
