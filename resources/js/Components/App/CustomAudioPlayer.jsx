@@ -45,6 +45,7 @@ const CustomAudioPlayer = ({ file, showVolume = true }) => {
         <div className="w-full flex items-center gap-2 py-2 px-3 rounded-md">
             <audio
                 ref={audioRef}
+                src={file.url}
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handelLoadedMetadata}
             />

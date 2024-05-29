@@ -126,18 +126,6 @@ class MessageController extends Controller
 
             return response()->json(['error' => 'Failed to store message: ' . $e->getMessage()], 500);
         }
-
-        if ($receiver_id) {
-            Conversation::updateMessage($receiver_id, auth()->id(), $message);
-        }
-
-        if ($group_id) {
-            Group::updateMessage($group_id, $message);
-        }
-
-        SocketMessage::dispatch($message);
-
-        return new MessageResource($message);
     }
 
     /** 

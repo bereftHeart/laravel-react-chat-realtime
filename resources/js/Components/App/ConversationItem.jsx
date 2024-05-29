@@ -68,10 +68,16 @@ const ConversationItem = ({
                         </span>
                     )}
                 </div>
-                {conversation.last_message && (
+                {conversation.last_message ? (
                     <p className="text-nowrap text-xs overflow-hidden text-ellipsis">
                         {conversation.last_message}
                     </p>
+                ) : (
+                    conversation.last_message_date && (
+                        <p className="text-nowrap text-xs overflow-hidden text-ellipsis italic">
+                            Send an attachment
+                        </p>
+                    )
                 )}
             </div>
             {user.is_admin && conversation.is_user ? (

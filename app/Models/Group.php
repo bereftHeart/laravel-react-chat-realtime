@@ -72,6 +72,7 @@ class Group extends Model
     {
         return self::updateOrCreate(
             ['id' => $group_id],
+            // ['last_message' => $message->message],
             ['last_message_id' => $message->id]
         );
     }

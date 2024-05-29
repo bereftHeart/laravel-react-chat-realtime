@@ -15,6 +15,7 @@ import { isImage, isAudio, isPDF, isVideo, isPreviewAble } from "@/helper";
 import CustomAudioPlayer from "./CustomAudioPlayer";
 import AttachmentPreview from "./AttachmentPreview";
 import AudioRecorder from "./AudioRecorder";
+import { useEventBus } from "@/EventBus";
 
 const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
     const [newMessage, setNewMessage] = useState("");
@@ -22,6 +23,7 @@ const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
     const [messageSending, setMessageSending] = useState(false);
     const [chosenFiles, setChosenFiles] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const { emit } = useEventBus();
 
     const onSend = () => {
         if (messageSending) return;
@@ -61,7 +63,6 @@ const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
                 },
             })
             .then((response) => {
-                // console.log(response.data);
                 setMessageSending(false);
                 setNewMessage("");
                 setUploadProgress(0);
@@ -93,7 +94,7 @@ const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
         }
 
         axios.post(route("message.store"), data).then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
         });
     };
 
@@ -108,6 +109,9 @@ const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
         setChosenFiles((prevFiles) => [...prevFiles, ...updateFiles]);
     };
 
+    const recorderAlready = (file, url) => {
+        setChosenFiles((prevFiles) => [...prevFiles, { file, url }]);
+    };
     return (
         <div className="flex flex-wrap items-start py-3 border-t border-slate-700">
             {/* file upload button */}
@@ -131,7 +135,7 @@ const MessageInput = ({ conversation = null, messagesCtrRef = null }) => {
                         className="absolute left-0 top-0 right-0 bottom-0 opacity-0 "
                     />
                 </button>
-                <AudioRecorder />
+                <AudioRecorder fileReady={recorderAlready} />
             </div>
             {/* message input */}
             <div className="relative order-1 xs:order-2 flex-1 px-3 xs:p-0 min-w-[220px] basis-full xs:basis-0">
