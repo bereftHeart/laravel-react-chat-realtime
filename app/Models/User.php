@@ -94,7 +94,7 @@ class User extends Authenticatable
             'is_group' => false,
             'is_admin' => (bool) $this->is_admin,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date . ' UTC',
+            'last_message_date' => $this->last_message_date ? $this->last_message_date . ' UTC' : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'blocked_at' => $this->blocked_at

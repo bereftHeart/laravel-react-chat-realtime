@@ -3,6 +3,7 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "./UserAvatar";
 import { formatMessageDateLong } from "@/helper";
+import MessageAttachments from "./MessageAttachments";
 
 const MessageItem = ({ message, attachmentClick, online = null }) => {
     const currentUser = usePage().props.auth.user;
@@ -33,8 +34,13 @@ const MessageItem = ({ message, attachmentClick, online = null }) => {
                     <div className="chat-message-content">
                         <ReactMarkdown>{message.message}</ReactMarkdown>
                     </div>
+                    <MessageAttachments
+                        attachments={message.attachments}
+                        attachmentClick={attachmentClick}
+                    />
                 </div>
-                {message.attachment && (
+
+                {/* {message.attachment && (
                     <div
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => attachmentClick(message.attachment)}
@@ -46,7 +52,7 @@ const MessageItem = ({ message, attachmentClick, online = null }) => {
                             {message.attachment.size} bytes
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </div>
     );

@@ -6,6 +6,10 @@
     height: 100vh;
 }
 
+.EmojiPickerReact.epr-dark-theme {
+    background-color: theme('colors.slate.700');
+}
+
 .conversation-item .avatar::before {
     width: 20%;
     height: 20%;
@@ -14,3 +18,83 @@
     right: 2%;
 }
 
+.chat-message-content > blockquote,
+.chat-message-content > dl,
+.chat-message-content > dd,
+.chat-message-content > h1,
+.chat-message-content > h2,
+.chat-message-content > h3,
+.chat-message-content > h4,
+.chat-message-content > h5,
+.chat-message-content > h6,
+.chat-message-content > hr,
+.chat-message-content > figure,
+.chat-message-content > p,
+.chat-message-content > pre {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.chat-message-content > ol,
+.chat-message-content > ul {
+    list-style: revert;
+    margin: revert;
+    padding: revert;
+}
+
+.chat-message-content > table {
+    border-collapse: revert;
+}
+
+.chat-message-content > h1,
+.chat-message-content > h2,
+.chat-message-content > h3,
+.chat-message-content > h4,
+.chat-message-content > h5,
+.chat-message-content > h6 {
+    font-size: revert;
+    font-weight: revert;
+}
+
+.chat-message-content a {
+    text-decoration: underline;
+    color: #3182ce;
+}
+.chat-message-content > :first-child {
+    margin-top: 0;
+}
+
+.chat-message-content > :last-child {
+    margin-bottom: 0;
+}
+
+.chat-message-content > blockquote {
+    border-left: 5px solid #ccc;
+    font-style: italic;
+    margin: auto 0;
+    padding: 0 1.5em;
+    overflow: hidden;
+
+}
+
+.chat-message-content code {
+    font-family: 'Courier New', Courier, monospace;
+    font-style: italic;
+    font-size: 90%;
+    padding: 2px 4px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-content pre {
+    padding: 1rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    font-style: italic;
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.chat-message-content pre code {
+    background-color: transparent;
+}

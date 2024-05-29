@@ -24,44 +24,6 @@ const ChatLayout = ({ children }) => {
         setLocalConversations(conversations);
     }, [conversations]);
 
-    const messageCreated = (message) => {
-        setLocalConversations((prevMsg) => {
-            // check if the message is for the selected conversation
-            return prevMsg.map((prev) => {
-                if (
-                    message.receiver_id &&
-                    !prev.is_group &&
-                    (prev.id === message.receiver_id ||
-                        prev.id === message.sender_id)
-                ) {
-                    prev.last_message = message.message;
-                    prev.last_message_date = message.created_at;
-                    return prev;
-                }
-
-                // check if the message is for the selected group
-                if (
-                    message.group_id &&
-                    prev.is_group &&
-                    prev.id === message.group_id
-                ) {
-                    prev.last_message = message.message;
-                    prev.last_message_date = message.created_at;
-                    return prev;
-                }
-
-                return prev;
-            });
-        });
-    };
-
-    useEffect(() => {
-        const offCreated = on("message.created", messageCreated);
-        return () => {
-            offCreated();
-        };
-    }, [on]);
-
     // sort conversations by last message date when it changes
     useEffect(() => {
         setSortedConversations(
@@ -86,6 +48,46 @@ const ChatLayout = ({ children }) => {
             })
         );
     }, [localConversations]);
+
+    // new message created
+    const messageCreated = (message) => {
+        setLocalConversations((prevMsg) => {
+            // check if the message is for the selected conversation
+            return prevMsg.map((prev) => {
+                if (
+                    message.receiver_id &&
+                    !prev.is_group &&
+                    (prev.id == message.receiver_id ||
+                        prev.id == message.sender_id)
+                ) {
+                    prev.last_message = message.message;
+                    prev.last_message_date = message.created_at;
+                    return prev;
+                }
+
+                // check if the message is for the selected group
+                if (
+                    message.group_id &&
+                    prev.is_group &&
+                    prev.id == message.group_id
+                ) {
+                    prev.last_message = message.message;
+                    prev.last_message_date = message.created_at;
+                    return prev;
+                }
+
+                return prev;
+            });
+        });
+    };
+
+    // change the conversations when a new message is created
+    useEffect(() => {
+        const offCreated = on("message.created", messageCreated);
+        return () => {
+            offCreated();
+        };
+    }, [on]);
 
     // handle current users on the channel "online"
     useEffect(() => {
@@ -125,6 +127,7 @@ const ChatLayout = ({ children }) => {
         };
     }, []);
 
+    // search
     const onSearch = (e) => {
         const search = e.target.value.toLowerCase();
         setLocalConversations(

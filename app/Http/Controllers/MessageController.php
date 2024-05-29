@@ -96,7 +96,7 @@ class MessageController extends Controller
                     $directory = 'attachments/' . date('Y-m-d/h:i:s') . Str::random(10);
                     Storage::disk('public')->makeDirectory($directory);
 
-                    $attachment = [
+                    $attachments[] = [
                         'message_id' => $message->id,
                         'name' => $file->getClientOriginalName(),
                         'mime' => $file->getClientMimeType(),
@@ -104,7 +104,7 @@ class MessageController extends Controller
                         'path' => $file->store($directory, 'public')
                     ];
 
-                    $message->attachments()->create($attachment);
+                    $message->attachments()->createMany($attachments);
                 }
             }
 
@@ -126,40 +126,6 @@ class MessageController extends Controller
 
             return response()->json(['error' => 'Failed to store message: ' . $e->getMessage()], 500);
         }
-
-        // if ($files) {
-        //     foreach ($files as $file) {
-        //         $path = $file->store('attachments');
-        //         $attachments[] = [
-        //             'name' => $file->getClientOriginalName(),
-        //             'mime' => $file->getClientMimeType(),
-        //             'size' => $file->getSize(),
-        //             'path' => $path
-        //         ];
-        //     }
-        //     $message->attachments()->createMany($attachments);
-        // }
-
-        // $files = $data['attachments'] ?? [];
-        // $message = Message::create($data);
-        // $attachments = [];
-        // if ($files) {
-        //     foreach ($files as $file) {
-        //         $directory = 'attachments/' . date('Y-m-d/h:i:s') . Str::random(10);
-        //         Storage::disk('public')->makeDirectory($directory);
-
-        //         $model = [
-        //             'message_id' => $message->id,
-        //             'name' => $file->getClientOriginalName(),
-        //             'mime' => $file->getClientMimeType(),
-        //             'size' => $file->getSize(),
-        //             'path' => $file->store($directory, 'public')
-        //         ];
-        //         $attachment = MessageAttachment::create($model);
-        //         $attachments[] = $attachment;
-        //     }
-        //     $message->attachments = $attachments;
-        // }
 
         if ($receiver_id) {
             Conversation::updateMessage($receiver_id, auth()->id(), $message);

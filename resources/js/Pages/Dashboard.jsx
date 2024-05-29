@@ -8,6 +8,7 @@ import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/solid";
 import { useEventBus } from "@/EventBus";
 import UserAvatar from "@/Components/App/UserAvatar";
 import { Link } from "@inertiajs/react";
+import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
 
 function Dashboard({
     messages = null,
@@ -19,6 +20,8 @@ function Dashboard({
     const loadMoreInteract = useRef(null);
     const [noMoreMessage, setNoMoreMessage] = useState(false);
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
+    const [showAttachmentPreview, setAttachmentPreview] = useState(false);
+    const [previewAttachment, setPreviewAttachment] = useState({});
     const { on } = useEventBus();
 
     // listen to change on messages
@@ -42,7 +45,6 @@ function Dashboard({
                 const scrollHeight = messagesCtrRef.current.scrollHeight;
                 const scrollTop = messagesCtrRef.current.scrollTop;
                 const clientHeight = messagesCtrRef.current.clientHeight;
-                const isAtTop = scrollHeight - scrollTop === clientHeight;
 
                 setScrollFromBottom(scrollHeight - scrollTop - clientHeight);
 
@@ -110,8 +112,11 @@ function Dashboard({
         };
     }, [selectedConversation]);
 
+    const onAttachmentClick = (attachments, ind) => {
+        setPreviewAttachment({ attachments, ind });
+        setAttachmentPreview(true);
+    };
     const messageCreated = (message) => {
-        console.log(message);
         if (
             selectedConversation &&
             selectedConversation.is_group &&
@@ -181,6 +186,7 @@ function Dashboard({
                                     <MessageItem
                                         key={index}
                                         message={message}
+                                        attachmentClick={onAttachmentClick}
                                     />
                                 ))}
                             </div>
@@ -190,6 +196,15 @@ function Dashboard({
                         conversation={selectedConversation}
                         messagesCtrRef={messagesCtrRef}
                     />
+                    {/* modal for preview attachments */}
+                    {previewAttachment.attachments && (
+                        <AttachmentPreviewModal
+                            attachments={previewAttachment.attachments}
+                            index={previewAttachment.ind}
+                            show={showAttachmentPreview}
+                            onClose={() => setAttachmentPreview(false)}
+                        />
+                    )}
                 </>
             )}
         </>
