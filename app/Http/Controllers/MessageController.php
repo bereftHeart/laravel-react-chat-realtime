@@ -139,7 +139,17 @@ class MessageController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        $group_id = $message->group->id ?? null;
+        $conversation_id = Conversation::where('last_message_id', $message->id)->first()->id ?? null;
+
         $message->delete();
-        return response()->noContent();
+
+        if ($group_id) {
+            $lastMessage = Group::find($group_id)->messages()->latest()->first();
+        } else if ($conversation_id) {
+            $lastMessage = Message::find(Conversation::find($conversation_id)->last_message_id);
+        }
+
+        return response()->json(['message' => $lastMessage ? new MessageResource($lastMessage) : null]);
     }
 }

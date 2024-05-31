@@ -48,10 +48,17 @@ const MessageItem = ({ message, attachmentClick, online = null }) => {
             )}
 
             {message.message === null && message.attachments && (
-                <MessageAttachments
-                    attachments={message.attachments}
-                    attachmentClick={attachmentClick}
-                />
+                <div className="relative">
+                    {message.sender_id == currentUser.id && (
+                        <MessageOptionsDropdown message={message} />
+                    )}
+                    <div className="chat-message">
+                        <MessageAttachments
+                            attachments={message.attachments}
+                            attachmentClick={attachmentClick}
+                        />
+                    </div>
+                </div>
             )}
         </div>
     );

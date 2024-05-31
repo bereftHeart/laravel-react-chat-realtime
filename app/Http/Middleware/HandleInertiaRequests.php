@@ -2,11 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use Inertia\Middleware;
 use App\Models\Conversation;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Inertia\Middleware;
+use Illuminate\Support\Facades\Storage;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -32,15 +33,16 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if ($request->user()) {
+            $avatar_url = $request->user()->avatar ? Storage::url($request->user()->avatar) : null;
+        }
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
-            // 'conversations' => Auth::id() ? Conversation::getConversationsForSideBar(Auth::user()) : [],
-            'conversations' => Auth::id() ? Cache::remember('conversations' . Auth::id(), 60, function () {
-                return Conversation::getConversationsForSideBar(Auth::user());
-            }) : [],
+            'conversations' => Auth::id() ? Conversation::getConversationsForSideBar(Auth::user()) : [],
+            'avatar_url' => $avatar_url ?? null,
         ];
     }
 }

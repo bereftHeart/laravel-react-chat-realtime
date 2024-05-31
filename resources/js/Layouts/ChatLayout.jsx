@@ -1,23 +1,25 @@
-import CustomButton from "@/Components/CustomButton";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import TextInput from "@/Components/TextInput";
 import ConversationItem from "@/Components/App/ConversationItem";
 import { useEventBus } from "@/EventBus";
+import GroupModal from "@/Components/App/GroupModal";
 
 const ChatLayout = ({ children }) => {
     const page = usePage();
     const conversations = page.props.conversations;
     const selectedConversation = page.props.selectedConversation;
+    // console.log("selectedConversation", selectedConversation);
 
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
 
     const [onlineUsers, setOnlUsers] = useState({});
+    const [showGroupModal, setShowGroupModal] = useState(false);
     const isOnline = (userID) => onlineUsers[userID];
 
-    const { on } = useEventBus();
+    const { on, emit } = useEventBus();
 
     // listen to change on conversations
     useEffect(() => {
@@ -49,8 +51,8 @@ const ChatLayout = ({ children }) => {
         );
     }, [localConversations]);
 
-    // new message created
-    const messageCreated = (message) => {
+    // update newest message of the conversations on the sidebar
+    const messageUpdated = (message) => {
         setLocalConversations((prevMsg) => {
             // check if the message is for the selected conversation
             return prevMsg.map((prev) => {
@@ -81,11 +83,36 @@ const ChatLayout = ({ children }) => {
         });
     };
 
+    const messageDeleted = ({ prevLastMessage }) => {
+        messageUpdated(prevLastMessage);
+    };
     // change the conversations when a new message is created
     useEffect(() => {
-        const offCreated = on("message.created", messageCreated);
+        const offCreated = on("message.created", messageUpdated);
+        const offDeleted = on("message.deleted", messageDeleted);
+        const offShowGroupModal = on("GroupModal.show", () => {
+            setShowGroupModal(true);
+        });
+        const offGroupDelete = on("group.deleted", ({ id, name }) => {
+            // remove the group from the list of conversations
+            setLocalConversations((prev) => {
+                return prev.filter((conv) => conv.id !== id);
+            });
+
+            emit("toast.show", `Group "${name}" was deleted successfully`);
+
+            if (
+                !selectedConversation ||
+                (selectedConversation.is_group && selectedConversation.id == id)
+            ) {
+                router.visit(route("dashboard"));
+            }
+        });
         return () => {
             offCreated();
+            offDeleted();
+            offShowGroupModal();
+            offGroupDelete();
         };
     }, [on]);
 
@@ -153,11 +180,12 @@ const ChatLayout = ({ children }) => {
                             className="tooltip tooltip-left"
                             data-tip="Create new group"
                         >
-                            <button className="text-gray-400 hover:text-gray-200">
+                            <button
+                                onClick={() => setShowGroupModal(true)}
+                                className="text-gray-400 hover:text-gray-200"
+                            >
                                 <PencilSquareIcon className="w-5 h-5 inline-block ml-2" />
                             </button>
-                            {/* <CustomButton color="green" className="!px-2 !py-1">
-                            </CustomButton> */}
                         </div>
                     </div>
 
@@ -169,7 +197,7 @@ const ChatLayout = ({ children }) => {
                         ></TextInput>
                     </div>
                     {/* conversations */}
-                    <div className="flex-1 overflow-auto">
+                    <div className="flex-1 overflow-auto no-scrollbar">
                         {sortedConversations &&
                             sortedConversations.map((conversation) => (
                                 <ConversationItem
@@ -190,6 +218,11 @@ const ChatLayout = ({ children }) => {
                     {children}
                 </div>
             </div>
+
+            <GroupModal
+                show={showGroupModal}
+                onClose={() => setShowGroupModal(false)}
+            />
         </>
     );
 };

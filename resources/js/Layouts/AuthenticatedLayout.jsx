@@ -7,13 +7,18 @@ import { Link, usePage } from "@inertiajs/react";
 import { useEventBus } from "@/EventBus";
 import Toast from "@/Components/App/Toast";
 import NewMessageNotification from "@/Components/App/NewMessageNotification";
+import { UserPlusIcon } from "@heroicons/react/20/solid";
+import AddUserModal from "@/Components/App/AddUserModal";
 
 export default function Authenticated({ header, children }) {
     const page = usePage();
     const user = page.props.auth.user;
     const conversations = page.props.conversations;
+    console.log("conversations", conversations);
+    console.log("user", user);
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
     const { emit } = useEventBus();
 
     useEffect(() => {
@@ -56,6 +61,17 @@ export default function Authenticated({ header, children }) {
                             }`,
                     });
                 });
+
+            if (conversation.is_group) {
+                Echo.private(`group.deleted.${conversation.id}`)
+                    .listen("GroupDeleted", (e) => {
+                        console.log("group deleted", e);
+                        emit("group.deleted", { id: e.id, name: e.name });
+                    })
+                    .error((e) => {
+                        console.error(e);
+                    });
+            }
         });
 
         // leave the channels when the component is unmounted
@@ -71,6 +87,10 @@ export default function Authenticated({ header, children }) {
                           .join("-")}`;
 
                 Echo.leave(channel);
+
+                if (conversation.is_group) {
+                    Echo.leave(`group.deleted.${conversation.id}`);
+                }
             });
         };
     }, [conversations]);
@@ -99,7 +119,18 @@ export default function Authenticated({ header, children }) {
                             </div>
 
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
-                                <div className="ms-3 relative">
+                                <div className="ms-3 relative flex items-center">
+                                    {user.is_admin && (
+                                        <button
+                                            className="btn btn-info text-gray-800 dark:text-gray-200"
+                                            onClick={() =>
+                                                setShowAddUserModal(true)
+                                            }
+                                        >
+                                            <UserPlusIcon className="h-6 w-6 " />
+                                            Add new user
+                                        </button>
+                                    )}
                                     <Dropdown>
                                         <Dropdown.Trigger>
                                             <span className="inline-flex rounded-md">
@@ -239,6 +270,10 @@ export default function Authenticated({ header, children }) {
             </div>
             <Toast />
             <NewMessageNotification />
+            <AddUserModal
+                show={showAddUserModal}
+                onClose={(e) => setShowAddUserModal(false)}
+            />
         </>
     );
 }

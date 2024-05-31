@@ -1,11 +1,12 @@
-const UserAvatar = ({ user, online = false, profile = false }) => {
-    let onlineClass = online ? "online" : "offline";
+const UserAvatar = ({ user, online = null, profile = null }) => {
+    let onlineClass =
+        online === true ? "online" : online === false ? "offline" : "";
     const sizeClass = profile ? "h-40 w-40" : "h-10 w-10";
     return (
         <>
             {user.avatar_url && (
                 <div
-                    className={`chat-image avatar + ${
+                    className={`chat-image avatar ${
                         !profile ? onlineClass : ""
                     }`}
                 >
@@ -22,7 +23,11 @@ const UserAvatar = ({ user, online = false, profile = false }) => {
                     }`}
                 >
                     <div className={"bg-gray-400 rounded-full " + sizeClass}>
-                        <span className="text-xl text-gray-800">
+                        <span
+                            className={`text-xl text-gray-800 ${
+                                profile ? "text-5xl" : ""
+                            }`}
+                        >
                             {user.name.charAt(0).toUpperCase()}
                         </span>
                     </div>

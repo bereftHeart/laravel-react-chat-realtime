@@ -68,21 +68,19 @@ const ConversationItem = ({
                         </span>
                     )}
                 </div>
-                {conversation.last_message ? (
+                {conversation.last_message !== null ? (
                     <p className="text-nowrap text-xs overflow-hidden text-ellipsis">
                         {conversation.last_message}
                     </p>
-                ) : (
-                    conversation.last_message_date && (
-                        <p className="text-nowrap text-xs overflow-hidden text-ellipsis italic">
-                            Send an attachment
-                        </p>
-                    )
-                )}
+                ) : conversation.last_message_date !== null ? (
+                    <p className="text-nowrap text-xs overflow-hidden text-ellipsis italic">
+                        Send an attachment
+                    </p>
+                ) : null}
             </div>
-            {user.is_admin && conversation.is_user ? (
+            {!!user.is_admin && conversation.is_user && (
                 <UserOptionDropdown conversation={conversation} />
-            ) : null}
+            )}
         </Link>
     );
 };

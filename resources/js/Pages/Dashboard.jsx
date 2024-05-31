@@ -93,7 +93,7 @@ function Dashboard({
         };
     }, [localMessages]);
 
-    // listen to new message
+    // listen to new message on selected conversation
     useEffect(() => {
         setTimeout(() => {
             if (messagesCtrRef.current) {
@@ -103,12 +103,14 @@ function Dashboard({
         }, 10);
 
         const offCreated = on("message.created", messageCreated);
+        const offDeleted = on("message.deleted", messageDeleted);
 
         setScrollFromBottom(0);
         setNoMoreMessage(false);
         // cleanup
         return () => {
             offCreated();
+            offDeleted();
         };
     }, [selectedConversation]);
 
@@ -134,7 +136,28 @@ function Dashboard({
             setLocalMessages((prev) => [...prev, message]);
         }
     };
+    const messageDeleted = ({ message }) => {
+        if (
+            selectedConversation &&
+            selectedConversation.is_group &&
+            selectedConversation.id == message.group_id
+        ) {
+            setLocalMessages((prev) => {
+                return prev.filter((msg) => msg.id !== message.id);
+            });
+        }
 
+        if (
+            selectedConversation &&
+            selectedConversation.is_user &&
+            (selectedConversation.id == message.sender_id ||
+                selectedConversation.id == message.receiver_id)
+        ) {
+            setLocalMessages((prev) => {
+                return prev.filter((msg) => msg.id !== message.id);
+            });
+        }
+    };
     return (
         <>
             {!messages && (

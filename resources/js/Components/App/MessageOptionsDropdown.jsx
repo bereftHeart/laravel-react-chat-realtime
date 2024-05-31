@@ -6,10 +6,13 @@ import { useEventBus } from "@/EventBus";
 
 const MessageOptionsDropdown = ({ message }) => {
     const { emit } = useEventBus();
+
     const deleteMessage = () => {
         axios.delete(route("message.destroy", message.id)).then((response) => {
-            emit("message.deleted", message);
-            console.log(response.data);
+            emit("message.deleted", {
+                message: message,
+                prevLastMessage: response.data.message,
+            });
         });
     };
 

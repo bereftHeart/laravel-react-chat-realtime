@@ -23,7 +23,7 @@ const Toast = ({}) => {
         <div className="toast toast-top toast-end">
             {toasts.map((toast) => (
                 <div key={toast.uuid} className="alert alert-info">
-                    <span className="dark:text-gray-200 font-semibold">
+                    <span className="dark:text-gray-300 text-gray-800 font-semibold">
                         {toast.message}
                     </span>
                 </div>
