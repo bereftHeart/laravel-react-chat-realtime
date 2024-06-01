@@ -7,7 +7,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::redirect('/', 'dashboard');
     Route::get('/dashboard', [HomeController::class, 'home'])->name('dashboard');
     Route::get('user/{user}', [MessageController::class, 'byUser'])->name('chat.user');

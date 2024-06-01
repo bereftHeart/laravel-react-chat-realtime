@@ -7,8 +7,10 @@ import {
     ShieldCheckIcon,
     UserIcon,
 } from "@heroicons/react/20/solid";
+import { useEventBus } from "@/EventBus";
 
 const UserOptionDropdown = ({ conversation }) => {
+    const { emit } = useEventBus();
     const blockUser = () => {
         if (!conversation.is_user) {
             return;
@@ -17,6 +19,7 @@ const UserOptionDropdown = ({ conversation }) => {
         axios
             .post(route("user.block", conversation.id))
             .then((res) => {
+                emit("toast.show", res.data.message);
                 console.log(res.data);
             })
             .catch((err) => {
@@ -30,7 +33,7 @@ const UserOptionDropdown = ({ conversation }) => {
         axios
             .post(route("user.changeRole", conversation.id))
             .then((res) => {
-                console.log(res.data);
+                emit("toast.show", res.data.message);
             })
             .catch((err) => {
                 console.log(err);

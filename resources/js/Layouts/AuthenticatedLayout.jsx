@@ -14,8 +14,7 @@ export default function Authenticated({ header, children }) {
     const page = usePage();
     const user = page.props.auth.user;
     const conversations = page.props.conversations;
-    console.log("conversations", conversations);
-    console.log("user", user);
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
     const [showAddUserModal, setShowAddUserModal] = useState(false);

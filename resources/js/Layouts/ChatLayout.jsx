@@ -57,6 +57,7 @@ const ChatLayout = ({ children }) => {
             // check if the message is for the selected conversation
             return prevMsg.map((prev) => {
                 if (
+                    message &&
                     message.receiver_id &&
                     !prev.is_group &&
                     (prev.id == message.receiver_id ||
@@ -69,6 +70,7 @@ const ChatLayout = ({ children }) => {
 
                 // check if the message is for the selected group
                 if (
+                    message &&
                     message.group_id &&
                     prev.is_group &&
                     prev.id == message.group_id
@@ -197,7 +199,7 @@ const ChatLayout = ({ children }) => {
                         ></TextInput>
                     </div>
                     {/* conversations */}
-                    <div className="flex-1 overflow-auto no-scrollbar">
+                    <div className="flex-1 overflow-auto no-scrollbar pb-20">
                         {sortedConversations &&
                             sortedConversations.map((conversation) => (
                                 <ConversationItem
