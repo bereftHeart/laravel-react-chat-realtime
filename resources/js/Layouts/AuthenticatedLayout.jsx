@@ -119,7 +119,7 @@ export default function Authenticated({ header, children }) {
 
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
                                 <div className="ms-3 relative flex items-center">
-                                    {user.is_admin && (
+                                    {!!user.is_admin && (
                                         <button
                                             className="btn btn-info text-gray-800 dark:text-gray-200"
                                             onClick={() =>
